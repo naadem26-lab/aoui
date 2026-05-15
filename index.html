@@ -3,161 +3,421 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web2App | النظام المتكامل</title>
+    <title>Dimo-trans</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;400;700;900&display=swap" rel="stylesheet">
+    
     <style>
-        /* التنسيقات الأصلية الكاملة - ممنوع الحذف */
-        body { background-color: #0a0a0a; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; min-height: 100vh; display: flex; flex-direction: column; margin: 0; }
-        .neon-border { border: 1px solid rgba(168, 85, 247, 0.2); box-shadow: 0 0 15px rgba(168, 85, 247, 0.1); }
-        .neon-button { background: linear-gradient(90deg, #9333ea, #2563eb); transition: 0.3s; cursor: pointer; }
-        .neon-button:hover { box-shadow: 0 0 20px rgba(168, 85, 247, 0.5); transform: scale(1.02); }
-        .glass { background: rgba(22, 22, 22, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(147, 51, 234, 0.2); }
-        .neon-text { text-shadow: 0 0 10px rgba(168, 85, 247, 0.5); }
-        .input-focus:focus { border-color: #9333ea; box-shadow: 0 0 10px rgba(147, 51, 234, 0.3); outline: none; }
-        .admin-card { background: #111; border: 1px solid #222; transition: 0.3s; }
-        .admin-card:hover { border-color: #9333ea; }
-        .hidden { display: none !important; }
-        footer { margin-top: auto; padding: 25px; text-align: center; color: #555; font-size: 13px; border-top: 1px solid #111; }
-        
-        /* تحسين مظهر شريط التمرير */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #0a0a0a; }
-        ::-webkit-scrollbar-thumb { background: #9333ea; border-radius: 10px; }
-        
-        textarea { resize: none; }
 
-        /* نظام التنبيهات المخصص (Toast) داخل الموقع */
-        #toast-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; pointer-events: none; }
-        .toast-msg { background: rgba(20, 20, 20, 0.9); border: 1px solid #9333ea; color: white; padding: 12px 25px; margin-bottom: 10px; border-radius: 15px; box-shadow: 0 0 20px rgba(147, 51, 234, 0.3); font-size: 14px; opacity: 0; transform: translateY(20px); transition: 0.4s; pointer-events: auto; text-align: center; min-width: 250px; }
-        .toast-msg.show { opacity: 1; transform: translateY(0); }
+        :root {
+            --primary-neon: #9333ea;
+            --secondary-neon: #2563eb;
+            --accent-color: #ff00c8;
+            --bg-dark: #070707;
+            --glass-bg: rgba(18, 18, 18, 0.8);
+            --transition-speed: 0.4s;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body { 
+            background-color: var(--bg-dark); 
+            color: #e0e0e0; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            margin: 0; 
+            overflow-x: hidden;
+        }
+
+        .bg-glow-1 {
+            position: fixed; top: -15%; left: -10%; width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(147, 51, 234, 0.15) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1; border-radius: 50%; filter: blur(80px); animation: pulse Glow 10s infinite;
+        }
+
+        .bg-glow-2 {
+            position: fixed; bottom: -10%; right: -5%; width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1; border-radius: 50%; filter: blur(100px);
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        .neon-border { 
+            border: 1px solid rgba(147, 51, 234, 0.4); 
+            box-shadow: 0 0 25px rgba(147, 51, 234, 0.15), inset 0 0 10px rgba(147, 51, 234, 0.05); 
+            transition: var(--transition-speed);
+        }
+
+        .neon-border:hover {
+            border-color: var(--primary-neon);
+            box-shadow: 0 0 35px rgba(147, 51, 234, 0.3);
+        }
+
+        .glass-panel { 
+            background: var(--glass-bg); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.03); 
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
+            border-radius: 2.5rem;
+        }
+
+        .neon-button { 
+            background: linear-gradient(135deg, var(--primary-neon), var(--secondary-neon)); 
+            color: white;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            transition: all var(--transition-speed);
+            border: none;
+            cursor: pointer;
+        }
+
+        .neon-button::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s; z-index: -1;
+        }
+
+        .neon-button:hover::before { left: 100%; }
+
+        .neon-button:hover { 
+            box-shadow: 0 0 40px rgba(147, 51, 234, 0.6); 
+            transform: translateY(-3px) scale(1.02); 
+        }
+
+        .neon-text { 
+            text-shadow: 0 0 10px rgba(168, 85, 247, 0.8), 0 0 20px rgba(168, 85, 247, 0.3); 
+        }
+
+        .custom-input {
+            background: #0f0f0f !important;
+            border: 1px solid #222 !important;
+            border-radius: 1rem !important;
+            padding: 1.25rem !important;
+            color: white !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .custom-input:focus {
+            border-color: var(--primary-neon) !important;
+            box-shadow: 0 0 15px rgba(147, 51, 234, 0.2) !important;
+            background: #151515 !important;
+            outline: none !important;
+        }
+
+        .admin-row {
+            transition: background 0.3s;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .admin-row:hover {
+            background: rgba(147, 51, 234, 0.03);
+        }
+
+        .status-pill {
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        #toast-wrapper {
+            position: fixed; bottom: 40px; right: 40px; z-index: 9999;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+
+        .toast-item {
+            background: #111; color: white; border-right: 5px solid var(--primary-neon);
+            padding: 20px 35px; border-radius: 12px; font-weight: bold;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: slideIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+            opacity: 0;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .sidebar-card {
+            background: linear-gradient(180deg, #111 0%, #0a0a0a 100%);
+            border: 1px solid #1a1a1a;
+            border-radius: 2rem;
+        }
+
+        .hidden { display: none !important; }
+
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #070707; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(var(--primary-neon), var(--secondary-neon)); border-radius: 5px; }
+
+        footer { 
+            margin-top: auto; padding: 40px; text-align: center; color: #444; 
+            border-top: 1px solid #111; font-size: 14px; background: #050505;
+        }
     </style>
 </head>
 <body>
 
-    <div id="toast-container"></div>
+    <div class="bg-glow-1"></div>
+    <div class="bg-glow-2"></div>
+    <div id="toast-wrapper"></div>
 
-    <div id="loginPage" class="flex flex-col items-center justify-center min-h-screen relative p-6">
-        <div class="absolute top-0 left-0 w-80 h-80 bg-purple-900/10 rounded-full blur-[150px]"></div>
-        <div class="absolute bottom-0 right-0 w-80 h-80 bg-blue-900/10 rounded-full blur-[150px]"></div>
-
-        <div id="signInBox" class="glass w-full max-w-md p-10 rounded-[2.5rem] shadow-2xl relative z-10 mx-4">
-            <div class="text-center mb-10">
-                <h1 class="text-4xl font-black neon-text mb-3 bg-gradient-to-r from-purple-500 to-blue-400 bg-clip-text text-transparent">Web2App</h1>
-                <p class="text-gray-400 text-sm">سجل دخولك لإدارة أعمالك البرمجية</p>
+    <div id="loginPage" class="flex flex-col items-center justify-center min-h-screen p-6 relative">
+        
+        <div id="signInBox" class="glass-panel w-full max-w-lg p-14 relative z-10 animate-fade">
+            <div class="text-center mb-12">
+                <div class="w-20 h-20 bg-purple-600/10 rounded-3xl flex items-center justify-center mx-auto mb-6 neon-border">
+                    <i class="fas fa-layer-group text-3xl text-purple-500"></i>
+                </div>
+                <h1 class="text-6xl font-black neon-text mb-4 bg-gradient-to-r from-purple-400 to-blue-500 bg-clip-text text-transparent">Dimo-trans</h1>
+                <p class="text-gray-500 tracking-[3px] text-sm font-light">حول موقعك الى تطبيق بضغطة زر</p>
             </div>
-            <form class="space-y-6" onsubmit="event.preventDefault();">
-                <div class="relative">
-                    <i class="fas fa-envelope absolute right-4 top-1/2 -translate-y-1/2 text-gray-600"></i>
-                    <input type="email" id="loginEmail" placeholder="البريد الإلكتروني" class="w-full bg-[#0d0d0d] border border-gray-800 rounded-2xl py-4 pr-12 pl-4 input-focus text-sm text-white transition-all">
+
+            <form class="space-y-7" onsubmit="event.preventDefault();">
+                <div>
+                    <label class="text-xs text-gray-600 mb-2 block mr-4 uppercase font-bold">البريد الإلكتروني</label>
+                    <input type="email" id="loginEmail" placeholder="your@email.com" class="custom-input w-full">
                 </div>
-                <div class="relative">
-                    <i class="fas fa-lock absolute right-4 top-1/2 -translate-y-1/2 text-gray-600"></i>
-                    <input type="password" id="loginPassword" placeholder="كلمة المرور" class="w-full bg-[#0d0d0d] border border-gray-800 rounded-2xl py-4 pr-12 pl-4 input-focus text-sm text-white transition-all">
+                <div>
+                    <label class="text-xs text-gray-600 mb-2 block mr-4 uppercase font-bold">كلمة المرور</label>
+                    <div class="relative">
+                        <input type="password" id="loginPassword" placeholder="••••••••••••" class="custom-input w-full pl-12">
+                        <button type="button" onclick="togglePasswordVisibility('loginPassword', 'loginPasswordIcon')" class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-600 hover:text-purple-500 transition-colors">
+                            <i id="loginPasswordIcon" class="fas fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
-                <button id="emailLoginBtn" class="w-full neon-button py-4 rounded-2xl font-black text-white shadow-xl active:scale-95 transition-all">دخول</button>
+                <div class="text-left px-2">
+                    <button type="button" id="toForgotPassword" class="text-xs text-gray-500 hover:text-purple-400 font-bold transition-colors">نسيت كلمة السر؟</button>
+                </div>
+                <button id="emailLoginBtn" class="neon-button w-full py-5 rounded-2xl text-lg shadow-2xl active:scale-95">تسجيل الدخول للنظام</button>
             </form>
-            <div class="relative my-8 text-center">
-                <hr class="border-gray-800">
-                <span class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#0a0a0a] px-4 text-xs text-gray-500 font-bold">أو</span>
+
+            <div class="flex items-center my-10">
+                <div class="flex-grow h-[1px] bg-gray-900"></div>
+                <span class="px-6 text-[10px] text-gray-700 font-black uppercase tracking-widest">أو عبر جوجل</span>
+                <div class="flex-grow h-[1px] bg-gray-900"></div>
             </div>
-            <button id="googleBtn" class="w-full bg-white text-black hover:bg-gray-200 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 transition-all active:scale-95">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5"> جوجل
+
+            <button id="googleBtn" class="w-full bg-white text-black font-black py-5 rounded-2xl flex items-center justify-center gap-4 hover:bg-gray-200 transition-all active:scale-95">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-6 h-6"> المتابعة عبر حساب Google
             </button>
-            <p class="text-center text-gray-500 text-xs mt-8">ليس لديك حساب؟ <button id="toSignUp" class="text-purple-500 font-bold hover:underline">أنشئ حسابك الآن</button></p>
+
+            <p class="mt-12 text-center text-gray-600 text-xs">
+                ليس لديك حساب؟ 
+                <button id="toSignUp" class="text-purple-500 font-bold hover:text-purple-400 underline decoration-purple-900 underline-offset-4">ابدأ تجربتك الآن</button>
+            </p>
         </div>
 
-        <div id="signUpBox" class="glass w-full max-w-md p-10 rounded-[2.5rem] shadow-2xl relative z-10 mx-4 hidden">
-            <div class="text-center mb-8">
-                <h1 class="text-3xl font-black neon-text mb-3 bg-gradient-to-r from-purple-500 to-blue-400 bg-clip-text text-transparent">انضم إلينا</h1>
-            </div>
-            <form class="space-y-5" onsubmit="event.preventDefault();">
-                <input type="text" id="regName" placeholder="الاسم الكامل" class="w-full bg-[#0d0d0d] border border-gray-800 rounded-2xl py-4 px-4 input-focus text-sm text-white">
-                <input type="email" id="regEmail" placeholder="البريد الإلكتروني" class="w-full bg-[#0d0d0d] border border-gray-800 rounded-2xl py-4 px-4 input-focus text-sm text-white">
-                <input type="password" id="regPassword" placeholder="كلمة المرور" class="w-full bg-[#0d0d0d] border border-gray-800 rounded-2xl py-4 px-4 input-focus text-sm text-white">
-                <div class="flex items-center gap-3 px-2 text-[11px] text-gray-500">
-                    <input type="checkbox" id="termsBox" class="w-4 h-4 accent-purple-600">
-                    <label for="termsBox">أوافق على جميع الشروط والأحكام</label>
+        <div id="forgotPasswordBox" class="glass-panel w-full max-w-lg p-14 relative z-10 hidden">
+            <h1 class="text-4xl font-black text-center mb-6">استعادة <span class="text-purple-500">الحساب</span></h1>
+            <p class="text-gray-500 text-sm text-center mb-8">أدخل بريدك الإلكتروني وسيصلك رابط لتعيين كلمة سر جديدة.</p>
+            <form class="space-y-6" onsubmit="event.preventDefault();">
+                <div>
+                    <label class="text-xs text-gray-600 mb-2 block mr-4 uppercase font-bold">البريد الإلكتروني</label>
+                    <input type="email" id="resetEmail" placeholder="your@email.com" class="custom-input w-full">
                 </div>
-                <button id="registerBtn" class="w-full neon-button py-4 rounded-2xl font-black text-white shadow-xl transition-all">تأكيد التسجيل</button>
+                <button id="resetPasswordBtn" class="neon-button w-full py-5 rounded-2xl text-lg">إرسال رابط الاستعادة</button>
             </form>
-            <p class="text-center text-gray-500 text-xs mt-8">لديك حساب بالفعل؟ <button id="toSignIn" class="text-purple-500 font-bold hover:underline">سجل دخولك</button></p>
+            <button id="backToSignInFromReset" class="w-full text-center text-gray-500 text-xs mt-10 hover:text-white transition-all uppercase font-bold tracking-tighter">عد للخلف لتسجيل الدخول</button>
+        </div>
+
+        <div id="signUpBox" class="glass-panel w-full max-w-lg p-14 relative z-10 hidden">
+            <h1 class="text-4xl font-black text-center mb-10">إنشاء حساب <span class="text-purple-500">جديد</span></h1>
+            <form class="space-y-6" onsubmit="event.preventDefault();">
+                <input type="text" id="regName" placeholder="الاسم الكامل" class="custom-input w-full">
+                <input type="email" id="regEmail" placeholder="بريدك الإلكتروني الرئيسي" class="custom-input w-full">
+                <div class="relative">
+                    <input type="password" id="regPassword" placeholder="اختر كلمة مرور قوية" class="custom-input w-full pl-12">
+                    <button type="button" onclick="togglePasswordVisibility('regPassword', 'regPasswordIcon')" class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-600 hover:text-purple-500 transition-colors">
+                        <i id="regPasswordIcon" class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div class="relative">
+                    <input type="password" id="regPasswordConfirm" placeholder="تأكيد كلمة المرور" class="custom-input w-full pl-12">
+                    <button type="button" onclick="togglePasswordVisibility('regPasswordConfirm', 'regPasswordConfirmIcon')" class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-600 hover:text-purple-500 transition-colors">
+                        <i id="regPasswordConfirmIcon" class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div class="bg-blue-900/10 p-4 rounded-xl border border-blue-900/20 text-[10px] text-blue-400 leading-relaxed">
+                    <i class="fas fa-info-circle ml-1"></i> عند التسجيل الآن، ستحصل على صلاحية تحويل تطبيق واحد مجاناً بالكامل لمدة شهر.
+                </div>
+                <button id="registerBtn" class="neon-button w-full py-5 rounded-2xl text-lg">انشاء الحساب</button>
+            </form>
+            <button id="toSignIn" class="w-full text-center text-gray-500 text-xs mt-10 hover:text-white transition-all uppercase font-bold tracking-tighter">لديك حساب؟ عد للخلف</button>
         </div>
     </div>
 
-    <div id="userPage" class="hidden p-4 md:p-12 flex-grow">
-        <div class="max-w-6xl mx-auto">
-            <div class="flex justify-between items-center mb-12">
+    <div id="userPage" class="hidden p-8 md:p-20 flex-grow">
+        <div class="max-w-7xl mx-auto">
+            
+            <nav class="flex justify-between items-start mb-20">
                 <div>
-                    <h1 class="text-3xl md:text-5xl font-black bg-gradient-to-l from-purple-500 to-blue-400 bg-clip-text text-transparent">أنشئ تطبيقك الاحترافي</h1>
-                    <p class="text-gray-500 mt-2">حوّل موقعك أو كودك البرمجي إلى تطبيق أندرويد</p>
+                    <h2 class="text-5xl font-black text-white mb-4">مرحبا بك</h2>
+                    <p class="text-gray-500 font-medium">حول موقعك الى تطبيق </p>
                 </div>
-                <button id="logoutBtnUser" class="bg-red-500/10 text-red-500 px-6 py-2 rounded-xl text-xs font-bold border border-red-500/20 hover:bg-red-500 hover:text-white transition-all">خروج</button>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 text-right">
-                <div class="lg:col-span-2 space-y-8">
-                    <div class="bg-[#111] p-8 rounded-[2rem] neon-border">
-                        <h2 class="text-xl font-bold mb-6 text-purple-400 flex items-center gap-3"><i class="fas fa-image"></i> أيقونة التطبيق (Logo)</h2>
-                        <label class="block border-2 border-dashed border-gray-800 rounded-2xl p-10 text-center cursor-pointer hover:border-purple-500 transition-all bg-[#0d0d0d]">
-                            <i class="fas fa-cloud-upload-alt text-4xl text-purple-600 mb-4"></i>
-                            <p class="text-gray-400 font-medium" id="fileName">اضغط هنا لرفع صورة الأيقونة</p>
-                            <input type="file" id="logoFile" class="hidden" accept="image/*" onchange="document.getElementById('fileName').innerText = 'تم اختيار: ' + this.files[0].name; document.getElementById('fileName').style.color = '#10b981';">
-                        </label>
+                <div class="flex gap-4">
+                    <div class="hidden md:flex flex-col items-end justify-center px-6">
+                        <span class="text-[10px] text-gray-700 font-black uppercase">رصيد الحساب</span>
+                        <span class="text-green-500 font-bold">$0.00 (مجاني)</span>
                     </div>
+                    <button id="logoutBtnUser" class="bg-red-500/5 text-red-500 border border-red-500/20 px-8 py-3 rounded-2xl font-black text-sm hover:bg-red-500 hover:text-white transition-all shadow-lg">خروج</button>
+                </div>
+            </nav>
 
-                    <div class="bg-[#111] p-8 rounded-[2rem] neon-border">
-                        <h2 class="text-xl font-bold mb-6 text-purple-400 flex items-center gap-3"><i class="fas fa-code"></i> مصدر التطبيق</h2>
-                        <div class="space-y-6">
-                            <input type="text" id="appName" placeholder="اسم التطبيق" class="w-full bg-[#0d0d0d] border border-gray-800 rounded-xl px-4 py-4 focus:outline-none focus:border-purple-500 text-white">
-                            <input type="url" id="siteUrl" placeholder="رابط الموقع (إذا وجد)" class="w-full bg-[#0d0d0d] border border-gray-800 rounded-xl px-4 py-4 focus:outline-none focus:border-purple-500 text-white">
-                            <textarea id="appCode" rows="8" placeholder="أو الصق الكود البرمجي هنا مباشرة (HTML/CSS/JS)..." class="w-full bg-[#0d0d0d] border border-gray-800 rounded-xl px-4 py-4 focus:outline-none focus:border-purple-500 text-white text-sm font-mono"></textarea>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
+                <div class="lg:col-span-8">
+                    <div class="sidebar-card p-12 neon-border">
+                        <div class="flex items-center gap-6 mb-12">
+                            <span class="w-16 h-16 rounded-full bg-purple-600 flex items-center justify-center text-2xl font-black shadow-2xl shadow-purple-900">01</span>
+                            <h3 class="text-3xl font-black">تفاصيل التطبيق</h3>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                            <div class="space-y-4">
+                                <label class="text-xs font-black text-gray-600 uppercase mr-2">اسم التطبيق</label>
+                                <input type="text" id="appName" placeholder="مثلاً: gold shop" class="custom-input w-full">
+                            </div>
+                            <div class="space-y-4">
+                                <label class="text-xs font-black text-gray-600 uppercase mr-2">صيغة التصدير</label>
+                                <select id="formatSelect" class="custom-input w-full appearance-none">
+                                    <option value="APK">APK</option>
+                                    <option value="AAB">AAB</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4 mb-10">
+                            <label class="text-xs font-black text-gray-600 uppercase mr-2">أيقونة التطبيق (Logo)</label>
+                            <div class="relative">
+                                <label class="flex flex-col items-center justify-center border-2 border-dashed border-gray-800 rounded-[2.5rem] p-16 cursor-pointer hover:border-purple-600 hover:bg-purple-600/5 transition-all group">
+                                    <i class="fas fa-image text-6xl text-gray-800 group-hover:text-purple-600 mb-4"></i>
+                                    <span id="fileName" class="text-gray-600 font-bold group-hover:text-gray-300">اختر صورة الأيقونة من جهازك</span>
+                                    <input type="file" id="logoFile" class="hidden" accept="image/*" onchange="updateFileLabel(this)">
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4 mb-10">
+                            <label class="text-xs font-black text-gray-600 uppercase mr-2">المصدر البرمجي</label>
+                            <textarea id="appCode" rows="8" placeholder="https://example.com  أو الصق هنا كود HTML/CSS/JS بالكامل..." class="custom-input w-full text-sm font-mono"></textarea>
+                        </div>
+
+                        <div class="bg-gradient-to-l from-purple-900/30 to-transparent p-10 rounded-[2rem] border-r-4 border-purple-600 flex justify-between items-center shadow-2xl">
+                            <div>
+                                <h4 class="text-xl font-black mb-1">ملخص الدفع</h4>
+                                <p class="text-xs text-gray-500 uppercase tracking-widest">خطة الشهر المجاني نشطة</p>
+                            </div>
+                            <div class="text-left">
+                                <span class="text-4xl font-black">$0.00</span>
+                                <button id="submitBtn" class="neon-button block mt-4 px-12 py-4 rounded-xl text-xs">تأكيد وإرسال للمراجعة</button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="space-y-8">
-                    <div class="bg-[#111] p-8 rounded-[2rem] neon-border sticky top-8 text-center">
-                        <h3 class="text-xl font-bold mb-8">تفاصيل التصدير</h3>
-                        <select id="formatSelect" class="w-full bg-[#0d0d0d] border border-gray-800 rounded-xl p-4 text-white mb-8 outline-none">
-                            <option value="APK">ملف APK</option>
-                            <option value="AAB">ملف AAB</option>
-                        </select>
-                        <div class="border-t border-gray-800 pt-6 mb-8 flex justify-between items-center text-gray-400">سعر الخدمة <span class="text-3xl font-black text-white">$29</span></div>
-                        <button id="submitBtn" class="w-full neon-button py-5 rounded-2xl font-black text-xl shadow-lg active:scale-95 transition-all">إرسال الطلب</button>
+                <div class="lg:col-span-4">
+                    <div class="sidebar-card p-10 h-full">
+                        <h3 class="text-2xl font-black mb-10 border-b border-gray-900 pb-6 flex items-center justify-between">
+                            سجل الطلبات
+                            <i class="fas fa-stream text-gray-800"></i>
+                        </h3>
+                        <div id="userOrdersList" class="space-y-6 max-h-[800px] overflow-y-auto pr-2">
+                            <div class="text-center py-20">
+                                <i class="fas fa-folder-open text-5xl text-gray-900 mb-6"></i>
+                                <p class="text-gray-700 text-sm font-bold uppercase tracking-widest">لا توجد طلبات حالية</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="adminPage" class="hidden p-8 max-w-7xl mx-auto flex-grow text-right">
-        <div class="flex justify-between items-center mb-10 border-b border-gray-800 pb-6">
-            <h1 class="text-3xl font-black text-purple-500">الإدارة المركزية <i class="fas fa-shield-alt"></i></h1>
-            <button id="logoutBtnAdmin" class="bg-gray-800 px-5 py-2 rounded-lg text-xs hover:bg-gray-700 transition-all">خروج</button>
-        </div>
-        <div class="bg-[#111] rounded-[2rem] overflow-hidden border border-gray-800 shadow-2xl">
-            <table class="w-full">
-                <thead class="bg-[#1a1a1a] text-gray-400 text-sm">
-                    <tr><th class="p-5">المستخدم</th><th class="p-5 text-center">اللوغو</th><th class="p-5 text-center">المصدر</th><th class="p-5 text-center">الصيغة</th><th class="p-5 text-center">الحالة</th></tr>
-                </thead>
-                <tbody id="adminTableBody" class="divide-y divide-gray-800"></tbody>
-            </table>
+    <div id="adminPage" class="hidden p-8 md:p-20 flex-grow animate-fade">
+        <div class="max-w-7xl mx-auto">
+            <header class="flex justify-between items-end mb-16 border-b border-gray-900 pb-10">
+                <div>
+                    <h1 class="text-5xl font-black text-purple-600 mb-2">إدارة <span class="text-white">Web2App</span></h1>
+                    <p class="text-gray-600 text-xs uppercase tracking-widest font-black">Admin Access: Authorized</p>
+                </div>
+                <button id="logoutBtnAdmin" class="text-gray-700 hover:text-red-500 transition-all text-2xl"><i class="fas fa-power-off"></i></button>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                <div class="sidebar-card p-8 border-r-4 border-blue-600">
+                    <p class="text-gray-600 text-xs font-black uppercase mb-2 tracking-widest">إجمالي الطلبات</p>
+                    <p class="text-4xl font-black text-white" id="statTotal">0</p>
+                </div>
+                <div class="sidebar-card p-8 border-r-4 border-yellow-600">
+                    <p class="text-gray-600 text-xs font-black uppercase mb-2 tracking-widest">طلبات معلقة</p>
+                    <p class="text-4xl font-black text-white" id="statPending">0</p>
+                </div>
+                <div class="sidebar-card p-8 border-r-4 border-green-600">
+                    <p class="text-gray-600 text-xs font-black uppercase mb-2 tracking-widest">طلبات مكتملة</p>
+                    <p class="text-4xl font-black text-white" id="statDone">0</p>
+                </div>
+            </div>
+
+            <div class="sidebar-card overflow-hidden shadow-2xl">
+                <table class="w-full text-right border-collapse">
+                    <thead class="bg-[#050505] text-gray-500 text-[10px] font-black uppercase tracking-widest">
+                        <tr>
+                            <th class="p-8 border-b border-gray-900">المستخدم والمشروع</th>
+                            <th class="p-8 border-b border-gray-900 text-center">الأيقونة</th>
+                            <th class="p-8 border-b border-gray-900 text-center">الحالة</th>
+                            <th class="p-8 border-b border-gray-900 text-center">الإجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody" class="divide-y divide-gray-900">
+                        </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <footer><p>© 2026 Web2App Pro. جميع الحقوق محفوظة لـ <span class="text-purple-500 font-bold">Aouidji Adem</span></p></footer>
+    <footer>
+        <div class="max-w-xl mx-auto">
+            <div class="flex justify-center gap-10 mb-8 text-2xl text-gray-800">
+                <i class="fab fa-github hover:text-purple-600 transition-all cursor-pointer"></i>
+                <i class="fab fa-linkedin hover:text-blue-600 transition-all cursor-pointer"></i>
+                <i class="fab fa-discord hover:text-indigo-600 transition-all cursor-pointer"></i>
+            </div>
+            <p class="uppercase font-black tracking-[5px] text-[12px] mb-2">Dimo-trans</p>
+            <p class="text-gray-700">divloped by <span class="text-purple-900 font-bold"> Adem VX </span></p>
+        </div>
+    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, updateDoc, doc, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
         const firebaseConfig = { 
             apiKey: "AIzaSyDKXfA7Plopqxl-Ylg4UdcZB5lMf7TtqKU", 
             authDomain: "dodo-97ae7.firebaseapp.com", 
             projectId: "dodo-97ae7", 
-            storageBucket: "dodo-97ae7.firebasestorage.app", 
+            storageBucket: "dodo-97ae7.appspot.com", 
             messagingSenderId: "720959022786", 
             appId: "1:720959022786:web:f500f167afedaf38507d5b" 
         };
@@ -165,93 +425,231 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const provider = new GoogleAuthProvider();
-        const ADMIN_EMAIL = "aouidjiadem@gmail.com";
+        const storage = getStorage(app);
+        const googleProvider = new GoogleAuthProvider();
 
-        // دالة التنبيهات Toast
-        function showToast(msg) {
-            const container = document.getElementById('toast-container');
-            const div = document.createElement('div');
-            div.className = 'toast-msg';
-            div.innerText = msg;
-            container.appendChild(div);
-            setTimeout(() => div.classList.add('show'), 100);
-            setTimeout(() => { div.classList.remove('show'); setTimeout(() => div.remove(), 400); }, 3500);
+        const ADMIN_EMAIL = "naadem@gmail.com";
+        const ADMIN_PASS = "aouidjiadem";
+
+        // دالة رؤية / إخفاء كلمة السر
+        window.togglePasswordVisibility = function(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === "password") {
+                input.type = "text";
+                icon.className = "fas fa-eye-slash";
+            } else {
+                input.type = "password";
+                icon.className = "fas fa-eye";
+            }
         }
 
-        // التنقل بين الشاشات
-        document.getElementById('toSignUp').onclick = () => { document.getElementById('signInBox').classList.add('hidden'); document.getElementById('signUpBox').classList.remove('hidden'); };
-        document.getElementById('toSignIn').onclick = () => { document.getElementById('signUpBox').classList.add('hidden'); document.getElementById('signInBox').classList.remove('hidden'); };
+        window.showToast = function(message) {
+            const wrapper = document.getElementById('toast-wrapper');
+            const item = document.createElement('div');
+            item.className = 'toast-item';
+            item.innerHTML = `<i class="fas fa-bolt ml-3 text-purple-500"></i> ${message}`;
+            wrapper.appendChild(item);
+            setTimeout(() => { item.style.opacity = '1'; }, 10);
+            setTimeout(() => {
+                item.style.transform = 'translateX(120%)';
+                item.style.opacity = '0';
+                setTimeout(() => item.remove(), 500);
+            }, 4000);
+        }
 
-        // مراقبة الجلسة
+        window.updateFileLabel = function(input) {
+            const lbl = document.getElementById('fileName');
+            if(input.files.length > 0) {
+                lbl.innerText = "جاهز للرفع: " + input.files[0].name;
+                lbl.style.color = "#9333ea";
+            }
+        }
+
         onAuthStateChanged(auth, (user) => {
-            [document.getElementById('loginPage'), document.getElementById('userPage'), document.getElementById('adminPage')].forEach(p => p.classList.add('hidden'));
+            const ui = {
+                login: document.getElementById('loginPage'),
+                user: document.getElementById('userPage'),
+                admin: document.getElementById('adminPage'),
+                forgotBox: document.getElementById('forgotPasswordBox')
+            };
+            
+            Object.values(ui).forEach(p => p.classList.add('hidden'));
+
             if (user) {
-                if (user.email === ADMIN_EMAIL) { document.getElementById('adminPage').classList.remove('hidden'); loadOrders(); }
-                else { document.getElementById('userPage').classList.remove('hidden'); }
-            } else { document.getElementById('loginPage').classList.remove('hidden'); }
+                if (user.email === ADMIN_EMAIL) {
+                    ui.admin.classList.remove('hidden');
+                    initAdminDashboard();
+                } else {
+                    ui.user.classList.remove('hidden');
+                    document.getElementById('userDisplayName').innerText = user.displayName || 'صديقنا';
+                    initUserDashboard(user.email);
+                }
+            } else {
+                ui.login.classList.remove('hidden');
+                document.getElementById('signInBox').classList.remove('hidden');
+                document.getElementById('signUpBox').classList.add('hidden');
+            }
         });
-
-        // عمليات الدخول
-        document.getElementById('googleBtn').onclick = () => signInWithPopup(auth, provider);
-        document.getElementById('logoutBtnUser').onclick = () => signOut(auth);
-        document.getElementById('logoutBtnAdmin').onclick = () => signOut(auth);
-
-        document.getElementById('registerBtn').onclick = async () => {
-            const email = document.getElementById('regEmail').value;
-            const pass = document.getElementById('regPassword').value;
-            if(!document.getElementById('termsBox').checked) return showToast("يرجى الموافقة على الشروط!");
-            try { await createUserWithEmailAndPassword(auth, email, pass); showToast("تم إنشاء الحساب!"); } catch(e) { showToast(e.message); }
-        };
 
         document.getElementById('emailLoginBtn').onclick = async () => {
             const email = document.getElementById('loginEmail').value;
             const pass = document.getElementById('loginPassword').value;
-            try { await signInWithEmailAndPassword(auth, email, pass); } catch(e) { showToast("خطأ في البيانات"); }
+            if(!email || !pass) return showToast("أدخل بيانات الدخول كاملة");
+            try { 
+                await signInWithEmailAndPassword(auth, email, pass);
+                showToast("تم تسجيل الدخول بنجاح");
+            } catch(e) { showToast("خطأ: البريد أو كلمة المرور غير صحيحة"); }
         };
 
-        // إرسال الطلب
-        document.getElementById('submitBtn').onclick = async () => {
-            const logo = document.getElementById('logoFile').files[0];
-            const name = document.getElementById('appName').value;
-            if(!logo || !name) return showToast("الاسم واللوغو مطلوبان!");
+        document.getElementById('registerBtn').onclick = async () => {
+            const email = document.getElementById('regEmail').value;
+            const pass = document.getElementById('regPassword').value;
+            const passConfirm = document.getElementById('regPasswordConfirm').value;
+
+            if(pass !== passConfirm) return showToast("كلمتا السر غير متطابقتين!");
+            if(pass.length < 6) return showToast("كلمة المرور يجب أن تكون 6 رموز فأكثر");
             
-            const reader = new FileReader();
-            reader.readAsDataURL(logo);
-            reader.onload = async () => {
-                try {
-                    await addDoc(collection(db, "orders"), {
-                        user: auth.currentUser.email,
-                        appName: name,
-                        siteUrl: document.getElementById('siteUrl').value,
-                        appCode: document.getElementById('appCode').value,
-                        logoData: reader.result,
-                        format: document.getElementById('formatSelect').value,
-                        status: "قيد المراجعة",
-                        createdAt: serverTimestamp()
-                    });
-                    showToast("تم إرسال طلبك بنجاح!");
-                } catch(e) { showToast("خطأ في الإرسال"); }
-            };
+            try { 
+                await createUserWithEmailAndPassword(auth, email, pass);
+                showToast("تم إنشاء حسابك الجديد!");
+            } catch(e) { showToast("فشل التسجيل: البريد مستخدم مسبقاً"); }
         };
 
-        // عرض الطلبات للأدمن
-        function loadOrders() {
-            onSnapshot(query(collection(db, "orders"), orderBy("createdAt", "desc")), (snap) => {
-                const tbody = document.getElementById('adminTableBody'); tbody.innerHTML = "";
+        document.getElementById('resetPasswordBtn').onclick = async () => {
+            const email = document.getElementById('resetEmail').value;
+            if(!email) return showToast("الرجاء كتابة البريد الإلكتروني أولاً");
+            try {
+                await sendPasswordResetEmail(auth, email);
+                showToast("تم إرسال رابط استعادة كلمة السر لبريدك الإلكتروني");
+                document.getElementById('forgotPasswordBox').classList.add('hidden');
+                document.getElementById('signInBox').classList.remove('hidden');
+            } catch(e) {
+                showToast("خطأ: تأكد من صحة البريد الإلكتروني المدخل");
+            }
+        };
+
+        document.getElementById('googleBtn').onclick = () => signInWithPopup(auth, googleProvider);
+        document.getElementById('logoutBtnUser').onclick = () => signOut(auth);
+        document.getElementById('logoutBtnAdmin').onclick = () => signOut(auth);
+
+        document.getElementById('submitBtn').onclick = async () => {
+            const name = document.getElementById('appName').value;
+            const code = document.getElementById('appCode').value;
+            const file = document.getElementById('logoFile').files[0];
+
+            if(!name || !code || !file) return showToast("يجب ملء كافة الحقول ورفع اللوغو");
+
+            showToast("جاري معالجة الطلب...");
+            
+            try {
+                const logoRef = ref(storage, `app_logos/${Date.now()}_${file.name}`);
+                const uploadTask = await uploadBytes(logoRef, file);
+                const logoUrl = await getDownloadURL(uploadTask.ref);
+
+                await addDoc(collection(db, "orders"), {
+                    userEmail: auth.currentUser.email,
+                    appName: name,
+                    appSource: code,
+                    logoUrl: logoUrl,
+                    format: document.getElementById('formatSelect').value,
+                    status: "قيد المراجعة",
+                    createdAt: serverTimestamp()
+                });
+
+                showToast("تم استلام طلبك! سنقوم بالعمل عليه فوراً.");
+                document.getElementById('appName').value = "";
+                document.getElementById('appCode').value = "";
+            } catch (error) {
+                showToast("حدث خطأ في الاتصال بالخادم");
+            }
+        };
+
+        function initUserDashboard(email) {
+            const q = query(collection(db, "orders"), where("userEmail", "==", email), orderBy("createdAt", "desc"));
+            onSnapshot(q, (snap) => {
+                const list = document.getElementById('userOrdersList');
+                list.innerHTML = "";
+                if(snap.empty) {
+                    list.innerHTML = '<div class="text-center py-10 text-gray-800">لا توجد طلبات</div>';
+                    return;
+                }
                 snap.forEach(doc => {
-                    const d = doc.data();
-                    tbody.innerHTML += `
-                    <tr class="admin-card">
-                        <td class="p-5 font-bold">${d.user}<br><span class="text-purple-500 text-xs">${d.appName}</span></td>
-                        <td class="p-5 text-center"><img src="${d.logoData}" class="w-10 h-10 rounded-lg mx-auto"></td>
-                        <td class="p-5 text-center text-xs">${d.siteUrl ? 'رابط' : 'كود مخصص'}</td>
-                        <td class="p-5 text-center font-black">${d.format}</td>
-                        <td class="p-5 text-center"><span class="text-yellow-500 font-bold">${d.status}</span></td>
-                    </tr>`;
+                    const data = doc.data();
+                    const statusClass = data.status === "تم التسليم" ? "text-green-500 bg-green-500/10" : "text-yellow-500 bg-yellow-500/10";
+                    list.innerHTML += `
+                        <div class="sidebar-card p-6 border border-gray-900 animate-fade">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="font-black text-white">${data.appName}</span>
+                                <span class="status-pill ${statusClass}">${data.status}</span>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <img src="${data.logoUrl}" class="w-10 h-10 rounded-xl object-cover border border-purple-900">
+                                <p class="text-[9px] text-gray-600 font-bold uppercase tracking-widest">${data.format} | ${data.createdAt?.toDate().toLocaleDateString() || 'الآن'}</p>
+                            </div>
+                        </div>`;
                 });
             });
         }
+
+        function initAdminDashboard() {
+            onSnapshot(query(collection(db, "orders"), orderBy("createdAt", "desc")), (snap) => {
+                const tbody = document.getElementById('adminTableBody');
+                tbody.innerHTML = "";
+                
+                let pending = 0, done = 0;
+                
+                snap.forEach(d => {
+                    const data = d.data();
+                    if(data.status === "قيد المراجعة") pending++; else done++;
+                    
+                    tbody.innerHTML += `
+                        <tr class="admin-row">
+                            <td class="p-8">
+                                <p class="font-black text-white">${data.appName}</p>
+                                <p class="text-[10px] text-gray-500">${data.userEmail}</p>
+                            </td>
+                            <td class="p-8 text-center">
+                                <img src="${data.logoUrl}" class="w-12 h-12 rounded-2xl mx-auto shadow-2xl border border-gray-800">
+                            </td>
+                            <td class="p-8 text-center">
+                                <span class="status-pill ${data.status === 'تم التسليم' ? 'bg-green-600/20 text-green-500' : 'bg-yellow-600/20 text-yellow-500'}">
+                                    ${data.status}
+                                </span>
+                            </td>
+                            <td class="p-8 text-center">
+                                <button onclick="window.completeOrder('${d.id}')" class="bg-purple-600 hover:bg-purple-500 text-white text-[10px] px-6 py-2 rounded-full font-black transition-all">إتمام الطلب</button>
+                            </td>
+                        </tr>`;
+                });
+                document.getElementById('statTotal').innerText = snap.size;
+                document.getElementById('statPending').innerText = pending;
+                document.getElementById('statDone').innerText = done;
+            });
+        }
+
+        window.completeOrder = async (orderId) => {
+            await updateDoc(doc(db, "orders", orderId), { status: "تم التسليم" });
+            showToast("تم إكمال الطلب بنجاح");
+        };
+
+        document.getElementById('toSignUp').onclick = () => {
+            document.getElementById('signInBox').classList.add('hidden');
+            document.getElementById('signUpBox').classList.remove('hidden');
+        };
+        document.getElementById('toSignIn').onclick = () => {
+            document.getElementById('signUpBox').classList.add('hidden');
+            document.getElementById('signInBox').classList.remove('hidden');
+        };
+        document.getElementById('toForgotPassword').onclick = () => {
+            document.getElementById('signInBox').classList.add('hidden');
+            document.getElementById('forgotPasswordBox').classList.remove('hidden');
+        };
+        document.getElementById('backToSignInFromReset').onclick = () => {
+            document.getElementById('forgotPasswordBox').classList.add('hidden');
+            document.getElementById('signInBox').classList.remove('hidden');
+        };
+
     </script>
 </body>
 </html>

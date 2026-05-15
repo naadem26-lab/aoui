@@ -40,15 +40,28 @@
         }
 
         .bg-glow-1 {
-            position: fixed; top: -15%; left: -10%; width: 600px; height: 600px;
+            position: fixed; 
+            top: -15%; 
+            left: -10%; 
+            width: 600px; 
+            height: 600px;
             background: radial-gradient(circle, rgba(147, 51, 234, 0.15) 0%, rgba(0,0,0,0) 70%);
-            z-index: -1; border-radius: 50%; filter: blur(80px); animation: pulseGlow 10s infinite;
+            z-index: -1; 
+            border-radius: 50%; 
+            filter: blur(80px); 
+            animation: pulseGlow 10s infinite;
         }
 
         .bg-glow-2 {
-            position: fixed; bottom: -10%; right: -5%; width: 500px; height: 500px;
+            position: fixed; 
+            bottom: -10%; 
+            right: -5%; 
+            width: 500px; 
+            height: 500px;
             background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, rgba(0,0,0,0) 70%);
-            z-index: -1; border-radius: 50%; filter: blur(100px);
+            z-index: -1; 
+            border-radius: 50%; 
+            filter: blur(100px);
         }
 
         @keyframes pulseGlow {
@@ -91,9 +104,15 @@
         }
 
         .neon-button::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            content: ''; 
+            position: absolute; 
+            top: 0; 
+            left: -100%; 
+            width: 100%; 
+            height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: 0.5s; z-index: -1;
+            transition: 0.5s; 
+            z-index: -1;
         }
 
         .neon-button:hover::before { left: 100%; }
@@ -141,13 +160,22 @@
         }
 
         #toast-wrapper {
-            position: fixed; bottom: 40px; right: 40px; z-index: 9999;
-            display: flex; flex-direction: column; gap: 10px;
+            position: fixed; 
+            bottom: 40px; 
+            right: 40px; 
+            z-index: 9999;
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px;
         }
 
         .toast-item {
-            background: #111; color: white; border-right: 5px solid var(--primary-neon);
-            padding: 20px 35px; border-radius: 12px; font-weight: bold;
+            background: #111; 
+            color: white; 
+            border-right: 5px solid var(--primary-neon);
+            padding: 20px 35px; 
+            border-radius: 12px; 
+            font-weight: bold;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             animation: slideIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
             opacity: 0;
@@ -171,8 +199,13 @@
         ::-webkit-scrollbar-thumb { background: linear-gradient(var(--primary-neon), var(--secondary-neon)); border-radius: 5px; }
 
         footer { 
-            margin-top: auto; padding: 40px; text-align: center; color: #444; 
-            border-top: 1px solid #111; font-size: 14px; background: #050505;
+            margin-top: auto; 
+            padding: 40px; 
+            text-align: center; 
+            color: #444; 
+            border-top: 1px solid #111; 
+            font-size: 14px; 
+            background: #050505;
         }
     </style>
 </head>
@@ -360,7 +393,9 @@
                     <h1 class="text-5xl font-black text-purple-600 mb-2">إدارة <span class="text-white">Web2App</span></h1>
                     <p class="text-gray-600 text-xs uppercase tracking-widest font-black">Admin Access: Authorized</p>
                 </div>
-                <button id="logoutBtnAdmin" class="text-gray-700 hover:text-red-500 transition-all text-2xl"><i class="fas fa-power-off"></i></button>
+                <button id="logoutBtnAdmin" class="text-gray-700 hover:text-red-500 transition-all text-2xl">
+                    <i class="fas fa-power-off"></i>
+                </button>
             </header>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
@@ -430,7 +465,7 @@
         // --- إعدادات سوبابيس للستوراج البديلة (Supabase Storage Config) ---
         const SUPABASE_URL = "https://vrihybgpmteacyrjxcmq.supabase.co"; 
         const SUPABASE_ANON_KEY = "sb_publishable_DCfBRo59o4e_ZXXWkm1NJQ_Gr-A71FA"; 
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         window.togglePasswordVisibility = function(inputId, iconId) {
             const input = document.getElementById(inputId);
@@ -470,11 +505,12 @@
             const ui = {
                 login: document.getElementById('loginPage'),
                 user: document.getElementById('userPage'),
-                admin: document.getElementById('adminPage'),
-                forgotBox: document.getElementById('forgotPasswordBox')
+                admin: document.getElementById('adminPage')
             };
             
-            Object.values(ui).forEach(p => p.classList.add('hidden'));
+            ui.login.classList.add('hidden');
+            ui.user.classList.add('hidden');
+            ui.admin.classList.add('hidden');
 
             if (user) {
                 if (user.email === ADMIN_EMAIL) {
@@ -487,8 +523,6 @@
                 }
             } else {
                 ui.login.classList.remove('hidden');
-                document.getElementById('signInBox').classList.remove('hidden');
-                document.getElementById('signUpBox').classList.add('hidden');
             }
         });
 
@@ -522,8 +556,6 @@
             try {
                 await sendPasswordResetEmail(auth, email);
                 showToast("تم إرسال رابط استعادة كلمة السر لبريدك الإلكتروني");
-                document.getElementById('forgotPasswordBox').classList.add('hidden');
-                document.getElementById('signInBox').classList.remove('hidden');
             } catch(e) {
                 showToast("خطأ: تأكد من صحة البريد الإلكتروني المدخل");
             }
@@ -542,8 +574,12 @@
             }
         };
 
-        document.getElementById('logoutBtnUser').onclick = () => signOut(auth);
-        document.getElementById('logoutBtnAdmin').onclick = () => signOut(auth);
+        document.getElementById('logoutBtnUser').onclick = () => {
+            signOut(auth);
+        };
+        document.getElementById('logoutBtnAdmin').onclick = () => {
+            signOut(auth);
+        };
 
         // --- كود الإرسال المعدل ليرفع اللوجو على Supabase Storage ويحفظ الداتا على Firestore فايربيز ---
         document.getElementById('submitBtn').onclick = async () => {
@@ -556,13 +592,12 @@
             showToast("جاري معالجة ورفع اللوغو لـ Supabase...");
             
             try {
-                // توليد اسم فريد للملف داخل باكت الـ dimo
                 const fileExt = file.name.split('.').pop();
                 const fileName = `${Date.now()}_${Math.floor(Math.random() * 1000)}.${fileExt}`;
                 const filePath = `app_logos/${fileName}`;
 
                 // رفع الملف لباكت سوبابيس dimo
-                const { data, error } = await supabase.storage
+                const { data, error } = await supabaseClient.storage
                     .from('dimo')
                     .upload(filePath, file, {
                         cacheControl: '3600',
@@ -572,7 +607,7 @@
                 if (error) throw error;
 
                 // الحصول على الرابط العام المباشر للوجو
-                const { data: publicUrlData } = supabase.storage
+                const { data: publicUrlData } = supabaseClient.storage
                     .from('dimo')
                     .getPublicUrl(filePath);
 
@@ -589,7 +624,7 @@
                     createdAt: serverTimestamp()
                 });
 
-                showToast("تم استلام طلبك ورفع الأيقونة! سنقوم بالعمل عليه فوراً.");
+                showToast("تم استلام طلبك ورفع الأيقونة!");
                 document.getElementById('appName').value = "";
                 document.getElementById('appCode').value = "";
                 document.getElementById('fileName').innerText = "اختر صورة الأيقونة من جهازك";
@@ -613,14 +648,14 @@
                     const data = doc.data();
                     const statusClass = data.status === "تم التسليم" ? "text-green-500 bg-green-500/10" : "text-yellow-500 bg-yellow-500/10";
                     list.innerHTML += `
-                        <div class="sidebar-card p-6 border border-gray-900 animate-fade">
+                        <div class="sidebar-card p-6 border border-gray-900">
                             <div class="flex justify-between items-center mb-4">
                                 <span class="font-black text-white">${data.appName}</span>
                                 <span class="status-pill ${statusClass}">${data.status}</span>
                             </div>
                             <div class="flex items-center gap-4">
                                 <img src="${data.logoUrl}" class="w-10 h-10 rounded-xl object-cover border border-purple-900">
-                                <p class="text-[9px] text-gray-600 font-bold uppercase tracking-widest">${data.format} | ${data.createdAt?.toDate().toLocaleDateString() || 'الآن'}</p>
+                                <p class="text-[9px] text-gray-600 font-bold uppercase tracking-widest">${data.format}</p>
                             </div>
                         </div>`;
                 });
@@ -628,15 +663,22 @@
         }
 
         function initAdminDashboard() {
-            onSnapshot(query(collection(db, "orders"), orderBy("createdAt", "desc")), (snap) => {
+            // إعداد خيار جلب التوقيت غير المكتمل محلياً لمنع تعليق الاستعلام التلقائي
+            const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
+            onSnapshot(q, { includeMetadataChanges: true }, (snap) => {
                 const tbody = document.getElementById('adminTableBody');
                 tbody.innerHTML = "";
                 
-                let pending = 0, done = 0;
+                let pending = 0;
+                let done = 0;
                 
                 snap.forEach(d => {
                     const data = d.data();
-                    if(data.status === "قيد المراجعة") pending++; else done++;
+                    if(data.status === "قيد المراجعة") {
+                        pending++;
+                    } else {
+                        done++;
+                    }
                     
                     tbody.innerHTML += `
                         <tr class="admin-row">
@@ -645,7 +687,7 @@
                                 <p class="text-[10px] text-gray-500">${data.userEmail}</p>
                             </td>
                             <td class="p-8 text-center">
-                                <img src="${data.logoUrl}" class="w-12 h-12 rounded-2xl mx-auto shadow-2xl border border-gray-800">
+                                <img src="${data.logoUrl}" class="w-12 h-12 rounded-2xl mx-auto border border-gray-800">
                             </td>
                             <td class="p-8 text-center">
                                 <span class="status-pill ${data.status === 'تم التسليم' ? 'bg-green-600/20 text-green-500' : 'bg-yellow-600/20 text-yellow-500'}">

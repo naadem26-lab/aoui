@@ -12,7 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;400;700;900&display=swap" rel="stylesheet">
     
     <style>
-
         :root {
             --primary-neon: #9333ea;
             --secondary-neon: #2563eb;
@@ -41,7 +40,7 @@
         .bg-glow-1 {
             position: fixed; top: -15%; left: -10%; width: 600px; height: 600px;
             background: radial-gradient(circle, rgba(147, 51, 234, 0.15) 0%, rgba(0,0,0,0) 70%);
-            z-index: -1; border-radius: 50%; filter: blur(80px); animation: pulse Glow 10s infinite;
+            z-index: -1; border-radius: 50%; filter: blur(80px); animation: pulseGlow 10s infinite;
         }
 
         .bg-glow-2 {
@@ -223,7 +222,7 @@
             </button>
 
             <p class="mt-12 text-center text-gray-600 text-xs">
-                ليس لديك حساب؟ 
+                ليس لديك حساب？ 
                 <button id="toSignUp" class="text-purple-500 font-bold hover:text-purple-400 underline decoration-purple-900 underline-offset-4">ابدأ تجربتك الآن</button>
             </p>
         </div>
@@ -269,10 +268,9 @@
 
     <div id="userPage" class="hidden p-8 md:p-20 flex-grow">
         <div class="max-w-7xl mx-auto">
-            
             <nav class="flex justify-between items-start mb-20">
                 <div>
-                    <h2 class="text-5xl font-black text-white mb-4">مرحبا بك</h2>
+                    <h2 class="text-5xl font-black text-white mb-4">مرحبا بك، <span id="userDisplayName">صديقنا</span></h2>
                     <p class="text-gray-500 font-medium">حول موقعك الى تطبيق </p>
                 </div>
                 <div class="flex gap-4">
@@ -388,8 +386,7 @@
                             <th class="p-8 border-b border-gray-900 text-center">الإجراء</th>
                         </tr>
                     </thead>
-                    <tbody id="adminTableBody" class="divide-y divide-gray-900">
-                        </tbody>
+                    <tbody id="adminTableBody" class="divide-y divide-gray-900"></tbody>
                 </table>
             </div>
         </div>
@@ -403,13 +400,13 @@
                 <i class="fab fa-discord hover:text-indigo-600 transition-all cursor-pointer"></i>
             </div>
             <p class="uppercase font-black tracking-[5px] text-[12px] mb-2">Dimo-trans</p>
-            <p class="text-gray-700">divloped by <span class="text-purple-900 font-bold"> Adem VX </span></p>
+            <p class="text-gray-700">developed by <span class="text-purple-900 font-bold"> Adem VX </span></p>
         </div>
     </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInWithPopup, signInWithRedirect, GoogleAuthProvider, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, updateDoc, doc, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
@@ -428,10 +425,9 @@
         const storage = getStorage(app);
         const googleProvider = new GoogleAuthProvider();
 
-        const ADMIN_EMAIL = "naadem@gmail.com";
-        const ADMIN_PASS = "aouidjiadem";
+        // البريد وكلمة المرور الجديدة للوحة التحكم
+        const ADMIN_EMAIL = "aouidjiadem@gmail.com";
 
-        // دالة رؤية / إخفاء كلمة السر
         window.togglePasswordVisibility = function(inputId, iconId) {
             const input = document.getElementById(inputId);
             const icon = document.getElementById(iconId);
@@ -529,7 +525,19 @@
             }
         };
 
-        document.getElementById('googleBtn').onclick = () => signInWithPopup(auth, googleProvider);
+        document.getElementById('googleBtn').onclick = async () => {
+            try {
+                await signInWithPopup(auth, googleProvider);
+            } catch (error) {
+                if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request') {
+                    showToast("تم حظر النافذة المنبثقة، جاري التحويل الآمن...");
+                    await signInWithRedirect(auth, googleProvider);
+                } else {
+                    showToast("حدث خطأ أثناء الاتصال بجوجل");
+                }
+            }
+        };
+
         document.getElementById('logoutBtnUser').onclick = () => signOut(auth);
         document.getElementById('logoutBtnAdmin').onclick = () => signOut(auth);
 
@@ -649,7 +657,6 @@
             document.getElementById('forgotPasswordBox').classList.add('hidden');
             document.getElementById('signInBox').classList.remove('hidden');
         };
-
     </script>
 </body>
 </html>

@@ -11,6 +11,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;400;700;900&display=swap" rel="stylesheet">
     
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <style>
         :root {
             --primary-neon: #9333ea;
@@ -408,7 +410,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithPopup, signInWithRedirect, GoogleAuthProvider, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, updateDoc, doc, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
         const firebaseConfig = { 
             apiKey: "AIzaSyDKXfA7Plopqxl-Ylg4UdcZB5lMf7TtqKU", 
@@ -422,11 +423,14 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const storage = getStorage(app);
         const googleProvider = new GoogleAuthProvider();
 
-        // البريد وكلمة المرور الجديدة للوحة التحكم
         const ADMIN_EMAIL = "aouidjiadem@gmail.com";
+
+        // --- إعدادات سوبابيس للستوراج البديلة (Supabase Storage Config) ---
+        const SUPABASE_URL = "https://vrihybgpmteacyrjxcmq.supabase.co"; 
+        const SUPABASE_ANON_KEY = "sb_publishable_DCfBRo59o4e_ZXXWkm1NJQ_Gr-A71FA"; 
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         window.togglePasswordVisibility = function(inputId, iconId) {
             const input = document.getElementById(inputId);
@@ -541,6 +545,7 @@
         document.getElementById('logoutBtnUser').onclick = () => signOut(auth);
         document.getElementById('logoutBtnAdmin').onclick = () => signOut(auth);
 
+        // --- كود الإرسال المعدل ليرفع اللوجو على Supabase Storage ويحفظ الداتا على Firestore فايربيز ---
         document.getElementById('submitBtn').onclick = async () => {
             const name = document.getElementById('appName').value;
             const code = document.getElementById('appCode').value;
@@ -548,13 +553,32 @@
 
             if(!name || !code || !file) return showToast("يجب ملء كافة الحقول ورفع اللوغو");
 
-            showToast("جاري معالجة الطلب...");
+            showToast("جاري معالجة ورفع اللوغو لـ Supabase...");
             
             try {
-                const logoRef = ref(storage, `app_logos/${Date.now()}_${file.name}`);
-                const uploadTask = await uploadBytes(logoRef, file);
-                const logoUrl = await getDownloadURL(uploadTask.ref);
+                // توليد اسم فريد للملف داخل باكت الـ dimo
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${Date.now()}_${Math.floor(Math.random() * 1000)}.${fileExt}`;
+                const filePath = `app_logos/${fileName}`;
 
+                // رفع الملف لباكت سوبابيس dimo
+                const { data, error } = await supabase.storage
+                    .from('dimo')
+                    .upload(filePath, file, {
+                        cacheControl: '3600',
+                        upsert: false
+                    });
+
+                if (error) throw error;
+
+                // الحصول على الرابط العام المباشر للوجو
+                const { data: publicUrlData } = supabase.storage
+                    .from('dimo')
+                    .getPublicUrl(filePath);
+
+                const logoUrl = publicUrlData.publicUrl;
+
+                // حفظ بيانات الطلب بالكامل بداخل داتابيز الفايربيز Firestore الأصلية لتظهر في الأدمين واليوزر
                 await addDoc(collection(db, "orders"), {
                     userEmail: auth.currentUser.email,
                     appName: name,
@@ -565,11 +589,14 @@
                     createdAt: serverTimestamp()
                 });
 
-                showToast("تم استلام طلبك! سنقوم بالعمل عليه فوراً.");
+                showToast("تم استلام طلبك ورفع الأيقونة! سنقوم بالعمل عليه فوراً.");
                 document.getElementById('appName').value = "";
                 document.getElementById('appCode').value = "";
+                document.getElementById('fileName').innerText = "اختر صورة الأيقونة من جهازك";
+                document.getElementById('fileName').style.color = "";
             } catch (error) {
-                showToast("حدث خطأ في الاتصال بالخادم");
+                console.error(error);
+                showToast("حدث خطأ في الاتصال بالخادم أثناء الرفع: " + error.message);
             }
         };
 
